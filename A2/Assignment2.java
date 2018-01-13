@@ -1,6 +1,13 @@
+/*
+Moses, Tyler
+COP-3252
+Assignment 2
+01/013/2018
+*/
 import java.util.Scanner;
 
-public class Assignment2 {
+public class Assignment2
+{
 
   public static void main(String[] args)
   {
