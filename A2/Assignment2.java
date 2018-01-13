@@ -2,7 +2,7 @@
 Moses, Tyler
 COP-3252
 Assignment 2
-01/013/2018
+01/13/2018
 */
 import java.util.Scanner;
 
