@@ -13,7 +13,7 @@ public class Assignment2
   {
     Scanner in = new Scanner(System.in);
     System.out.printf("%s\n%s", "Lets create a new knight", "Please enter his name: ");
-    String name = in.next();
+    String name = in.nextLine();
     System.out.printf("Ok his name is %s.\nHow much health does he have? ", name);
     int health = in.nextInt();
     System.out.printf("He has %d units of health.\nHow many battles has he fought in? ", health);
@@ -22,7 +22,7 @@ public class Assignment2
     int age = in.nextInt();
     System.out.printf("Wow he is %d years old!\nHow much gold has he aquired? ", age);
     int gold = in.nextInt();
-    double avgGoldPerBattle = ((double) gold) / battles;
-    System.out.printf("Total gold = %d, and Average gold per battle = %f! Not bad, not bad!\n", gold, avgGoldPerBattle);
+    int avgGoldPerBattle = gold / battles;
+    System.out.printf("Total gold = %d, and Average gold per battle = %d! Not bad, not bad!\n", gold, avgGoldPerBattle);
   }
 }
