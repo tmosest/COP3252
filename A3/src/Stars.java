@@ -37,6 +37,16 @@ public class Stars
   }
 
   public String toString() {
-    return "rows: " + rows + "\ncolumns: " + columns;
+    StringBuilder sb = new StringBuilder();
+    for(int r  = 0; r < rows; r++)
+    {
+      if (r % 2 == 1) sb.append(" ");
+      for(int c = 0; c < columns; c++)
+      {
+        sb.append("* ");
+      }
+      sb.append("\n");
+    }
+    return sb.toString();
   }
 }

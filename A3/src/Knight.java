@@ -12,6 +12,9 @@ public class Knight
   private int age;
   private int gold;
 
+  public Knight()
+  {}
+
   public Knight(String name, int health, int battles, int age, int gold)
   {
     this.name = name;
@@ -72,11 +75,11 @@ public class Knight
   }
 
   public String toString() {
-    String result = "name: " + name +
-        "\nhealth: " + health +
-        "\nbattles: " + battles +
-        "\nage: " + age +
-        "\ngold: " + gold;
+    String result = "Knight Name: " + name +
+        "\nKnight Health: " + health +
+        "\nKnight Battles: " + battles +
+        "\nKnight Age: " + age +
+        "\nKnight Gold: $" + gold;
     return result;
   }
 }
