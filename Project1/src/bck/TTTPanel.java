@@ -1,3 +1,5 @@
+package bck;
+
 import java.awt.Graphics2D;
 
 public class TTTPanel extends javax.swing.JPanel implements Runnable {
@@ -189,9 +191,6 @@ public class TTTPanel extends javax.swing.JPanel implements Runnable {
 
       }
     }
-
-
-
 
     String xScore = String.format("X (%s): %d", new Object[] { XPlayType == TTTPanel.PlayerType.HUMAN ?
         "Human" : "Computer", Integer.valueOf(XWins) });

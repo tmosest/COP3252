@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,57 +11,93 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
-public class TipTacToe {
-  private static final String CREATER = "Tyler Moses";
+public class TicTacToePanel implements TicTacToeView {
+
   private static final Font APP_FONT = new Font("Serif", 1, 28);
+  private static final String TITLE = "Tic Tac Toe";
 
-  private static School[] schools = SchoolManager.ALL_SCHOOL;
-  private static School school = SchoolManager.FSU;
+  private String headerText;
+  private String footerText;
 
-  private static Color BG_COLOR = school.getPrimaryColor();
-  private static Color FG_COLOR = school.getSecondaryColor();
+  private JFrame app;
+  private JLabel header;
+  private JLabel footer;
+  private JMenuBar menuBar;
 
-  public static void main(String[] args) {
-    JFrame app = new JFrame("TicTacToe");
+  private Color backgroundColor;
+  private Color forgroundColor;
 
-    JLabel header = new JLabel(school.getAbr(), 0);
+  private TicTacToeGameView gameView;
+
+  private boolean isOneBot = false;
+  private boolean isTwoBot = true;
+
+  public TicTacToePanel()
+  {
+    this.headerText = "Tic Tac Toe";
+    this.footerText = "Tyler Moses";
+    this.backgroundColor = new Color(0, 0,0);
+    this.forgroundColor = new Color(255, 255, 255);
+    this.init();
+  }
+
+  public TicTacToePanel(String headerText, String footerText, Color primary, Color secondary)
+  {
+    this.headerText = headerText;
+    this.footerText = footerText;
+    this.backgroundColor = primary;
+    this.forgroundColor = secondary;
+    this.init();
+  }
+
+  public JFrame getApp() {
+    return app;
+  }
+
+  public JLabel getHeader() {
+    return header;
+  }
+
+  public JLabel getFooter() {
+    return footer;
+  }
+
+  public JMenuBar getMenuBar() {
+    return menuBar;
+  }
+
+  private void init()
+  {
+    // Create app
+    this.app = new JFrame(this.headerText);
+    this.gameView = new TicTacToeGameView();
+    this.initHeader();
+    this.initFooter();
+    this.initMenu();
+  }
+
+  private void initHeader()
+  {
+    header = new JLabel(TITLE, 0);
     header.setFont(APP_FONT);
-    header.setForeground(FG_COLOR);
+    header.setText(this.headerText);
+    header.setForeground(this.forgroundColor);
     header.setBorder(BorderFactory.createCompoundBorder(
         BorderFactory.createRaisedBevelBorder(),
         BorderFactory.createLoweredBevelBorder()));
+  }
 
-    JLabel footer = new JLabel(CREATER, 0);
+  private void initFooter()
+  {
+    footer = new JLabel(this.footerText, 0);
     footer.setFont(APP_FONT);
-    footer.setForeground(FG_COLOR);
+    footer.setForeground(this.forgroundColor);
     footer.setBorder(header.getBorder());
+  }
 
-    TTTPanel gamePanel = new TTTPanel();
-
-    JMenu schoolMenu = new JMenu("Schools");
-    ActionListener schoolMenuHandler = new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        for(int i = 0; i < schools.length; i++) {
-          if (schools[i].getName().equals(e.getActionCommand())) {
-            school = schools[i];
-            header.setText(school.getAbr());
-            header.setForeground(school.getSecondaryColor());
-            footer.setForeground(school.getSecondaryColor());
-            app.getContentPane().setBackground(school.getPrimaryColor());
-            app.getContentPane().setForeground(school.getSecondaryColor());
-          }
-        }
-      }
-    };
-
-    for(int i = 0; i < schools.length; i++) {
-      JMenuItem newSchoolItem = new JMenuItem(schools[i].getName());
-      newSchoolItem.setActionCommand(newSchoolItem.getName());
-      newSchoolItem.addActionListener(schoolMenuHandler);
-      schoolMenu.add(newSchoolItem);
-    }
-
+  private void initMenu()
+  {
+    TicTacToePanel self = this;
     JMenu fileMenu = new JMenu("File");
     fileMenu.setMnemonic(70);
     JMenuItem newGameItem = new JMenuItem("New Game");
@@ -74,9 +109,11 @@ public class TipTacToe {
     ActionListener fileMenuHandler = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if ("new game".equals(e.getActionCommand())) {
-          gamePanel.newGame();
+          gameView.newGame();
+          gameView.repaint();
         } else if ("reset scores".equals(e.getActionCommand())) {
-          gamePanel.resetScores();
+          gameView.resetScores();
+          gameView.repaint();
         } else if ("exit".equals(e.getActionCommand()))
           System.exit(0);
       }
@@ -107,16 +144,24 @@ public class TipTacToe {
     oGroup.add(oCompButton);
     ActionListener optionsMenuHandler = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        TTTPanel.PlayerType type;
-        if (e.getActionCommand().charAt(1) == 'H') {
-          type = TTTPanel.PlayerType.HUMAN;
-        } else {
-          type = TTTPanel.PlayerType.COMPUTER;
-        }
+        Player player;
+        boolean isPlayerOne = false;
         if (e.getActionCommand().charAt(0) == 'X') {
-          gamePanel.setXPlayType(type);
-        } else
-          gamePanel.setOPlayType(type);
+          player = gameView.getGameEngine().getPlayer1();
+          isPlayerOne = true;
+        } else {
+          player = gameView.getGameEngine().getPlayer2();
+        }
+        if (e.getActionCommand().charAt(1) == 'H') {
+          player.setBot(false);
+        } else {
+          player.setBot(true);
+          if (isPlayerOne) {
+            self.isOneBot = player.isBot();
+          } else {
+            self.isTwoBot = player.isBot();
+          }
+        }
       }
     };
     xHumanButton.addActionListener(optionsMenuHandler);
@@ -130,23 +175,25 @@ public class TipTacToe {
     optionsMenu.add(oCompButton);
 
 
-    JMenuBar menuBar = new JMenuBar();
+    menuBar = new JMenuBar();
     menuBar.add(fileMenu);
     menuBar.add(optionsMenu);
-    menuBar.add(schoolMenu);
+  }
 
+  public void start()
+  {
     app.add(header, "North");
     app.add(footer, "South");
-    app.add(gamePanel, "Center");
+    app.add(gameView, "Center");
     app.setJMenuBar(menuBar);
 
     app.setDefaultCloseOperation(3);
-    app.getContentPane().setBackground(BG_COLOR);
-    app.getContentPane().setForeground(FG_COLOR);
+    app.getContentPane().setBackground(this.backgroundColor);
+    app.getContentPane().setForeground(this.forgroundColor);
     app.pack();
     app.setResizable(false);
     app.setVisible(true);
 
-    gamePanel.run();
+    gameView.run();
   }
 }

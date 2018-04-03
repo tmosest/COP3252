@@ -1,3 +1,5 @@
+package bck;
+
 import java.util.Random;
 
 public class TTTEngine { private TTTEngine.Cell[][] cells;
@@ -43,9 +45,6 @@ public class TTTEngine { private TTTEngine.Cell[][] cells;
     filledCells = 0;
     setState(rand.nextBoolean() ? TTTEngine.GameState.X_TURN : TTTEngine.GameState.O_TURN);
   }
-
-
-
 
   private Boolean isWinningCell(int row, int col)
   {
@@ -112,9 +111,10 @@ public class TTTEngine { private TTTEngine.Cell[][] cells;
     return Boolean.valueOf(true);
   }
 
-
-
-
+  /**
+   * @name makeMoveAI
+   * @return
+   */
   public boolean makeMoveAI()
   {
     TTTEngine.Cell opp;
@@ -132,37 +132,24 @@ public class TTTEngine { private TTTEngine.Cell[][] cells;
         return false;
     }
     java.util.ArrayList<int[]> possibleMoves = new java.util.ArrayList();
-    int col; for (int row = 0; row < 3; row++) {
-    for (col = 0; col < 3; col++) {
-      if (getCell(row, col) == TTTEngine.Cell.EMPTY)
-        possibleMoves.add(new int[] { row, col });
+    int col;
+    for (int row = 0; row < 3; row++) {
+      for (col = 0; col < 3; col++) {
+        if (getCell(row, col) == TTTEngine.Cell.EMPTY)
+          possibleMoves.add(new int[] { row, col });
+      }
     }
-  }
-    Boolean winner = Boolean.valueOf(false);
-    for (int[] move : possibleMoves)
-    {
+
+    Boolean winner;
+    for (int[] move : possibleMoves)  {
       setCell(move[0], move[1], mark);
       winner = isWinningCell(move[0], move[1]);
       setCell(move[0], move[1], TTTEngine.Cell.EMPTY);
 
-      if (winner.booleanValue())
-      {
+      if (winner.booleanValue()) {
         return makeMove(move[0], move[1]).booleanValue();
       }
     }
-
-
-    for (int[] move : possibleMoves) {
-      setCell(move[0], move[1], opp);
-      winner = isWinningCell(move[0], move[1]);
-      setCell(move[0], move[1], TTTEngine.Cell.EMPTY);
-
-      if (winner.booleanValue())
-      {
-        return makeMove(move[0], move[1]).booleanValue();
-      }
-    }
-
 
     Random rand = new Random();
     int[] move = (int[])possibleMoves.get(rand.nextInt(possibleMoves.size()));
